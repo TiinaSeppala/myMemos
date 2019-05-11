@@ -3,6 +3,7 @@ import time
 import os
 
 def main ():
+    
     tiedosto = "memo.dat"
     muistikirja = []
     try:
@@ -12,7 +13,7 @@ def main ():
             
     #virheilmoitus:
     except (IOError, OSError):
-        print("memo.dat was created.\n")
+        print("memo.dat was created for the first time.\n")
 
     while True:
         print("(1) Read memo\n(2) Add note\n(3) Edit node\n(4) Delete note\n(5) Save and close\n")
@@ -52,17 +53,10 @@ def main ():
                         print("Delete error.")
 
             elif valinta == 5: #tallentaa muutokset pickle-tiedostoon ja lopettaa
-                
                 print("Program is closed.")
-                with open("memo.dat","wb") as wfp:
+                with open(tiedosto,"wb") as wfp:
                     pickle.dump(muistikirja,wfp)
                 break
-            
-                #with open("memo.dat","wb") as wfp:
-                    #pickle.dump(muistikirja,wfp)
-                    #wfp.close()
-                #break
-              #syote  break
 
             else: #jos valinta muuta kuin 1,2,3,4,5
                 print("Given number is not valid. Choose number between 1-5.")
