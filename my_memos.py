@@ -2,7 +2,7 @@ import pickle
 import time
 import os
 
-def main ():
+def main():
     tiedosto = "memo.dat"
     muistikirja = []
     try:
