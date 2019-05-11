@@ -2,12 +2,13 @@ import pickle
 import time
 import os
 
-def main():
+def main ():
     tiedosto = "memo.dat"
     muistikirja = []
     try:
         with open(tiedosto,"rb") as rfp:
             muistikirja = pickle.load(rfp)
+
             
     #virheilmoitus:
     except (IOError, OSError):
@@ -25,7 +26,7 @@ def main():
 
             elif valinta == 2: #lisaa uuden merkinnan
                 lisays = input("Write new note: ")
-                muistikirja.append(lisays+":::"+time.strftime("%X %x"))
+                muistikirja.append(lisays + ":::" + time.strftime("%X %x"))
 
             elif valinta == 3 or valinta == 4:
                 merkinnat = len(muistikirja) #listan alkioiden maara
@@ -37,7 +38,7 @@ def main():
                         muokattava = muokattava - 1 #muuttaa valitun numeron alkion numeroksi
                         print(muistikirja[muokattava])
                         tilalle = input("Write note: ")
-                        muistikirja[muokattava] = tilalle+":::"+time.strftime("%X %x")   #korvaa merkinnan
+                        muistikirja[muokattava] = tilalle + ":::" + time.strftime("%X %x")   #korvaa merkinnan
                     except IndexError:
                         print("Edit error. ")
 
@@ -51,11 +52,16 @@ def main():
                         print("Delete error.")
 
             elif valinta == 5: #tallentaa muutokset pickle-tiedostoon ja lopettaa
+                
                 print("Program is closed.")
                 with open("memo.dat","wb") as wfp:
                     pickle.dump(muistikirja,wfp)
-                    wfp.close()
                 break
+            
+                #with open("memo.dat","wb") as wfp:
+                    #pickle.dump(muistikirja,wfp)
+                    #wfp.close()
+                #break
               #syote  break
 
             else: #jos valinta muuta kuin 1,2,3,4,5
