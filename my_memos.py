@@ -1,80 +1,68 @@
-def oletusMuistio():
-    try:
-        tiedosto = open("muistio.dat")
-        muistio = tiedosto.name
-        tiedosto.close()
-        return muistio
-       
-    except (IOError,OSError):
-        print("Virhe tiedostossa, luodaan uusi muistio.dat")
-        oletusmuistio = open("muistio.dat","a")
-        muistio = oletusmuistio.name
-        oletusmuistio.close()
-        return muistio
+import pickle
+import time
+import os
 
 def main ():
-    import time
-    muistio = oletusMuistio() #avaa/luo tiedoston muistio.dat
-    while True:
-        print("(1) Lue muistikirjaa\
-        \n(2) Lisää merkintä\
-        \n(3) Muokkaa merkintää\
-        \n(4) Poista merkintä\
-        \n(5) Lopeta\n")
-        #varmistaa, että käyttäjä syöttää numeron
-        try:
-            valinta = int(input("Mitä haluat tehdä?:"))
+    tiedosto = "memo.dat"
+    muistikirja = []
+    try:
+        with open(tiedosto,"rb") as rfp:
+            muistikirja = pickle.load(rfp)
             
-            if valinta == 1:
-                lue = open(muistio)
-                print(lueTiedosto.read())
-                lue.close()
-                
-            elif valinta == 2:
-                lisaa = open(muistio,"a")
-                lisays = input("Kirjoita uusi merkintä:")
-                lisaa.write(lisays+":::"+time.strftime("%X %x")+"\n")
-                lisaa.close()
-                
-            elif valinta == 3:
-                muokkaa = open(muistio).read().splitlines() #tekee listan merkinnöistä riveittäin
-                merkinnat = len(muokkaa) #listan alkioiden määrä
-                print("Listalla on",merkinnat,"merkintää.")
-                
-                try:
-                    poisto = int(input("Mitä niistä muutetaan?: "))
-                    print(muokkaa[poisto])
-                    tilalle = input("Anna uusi teksti:")
-                    muokkaa[poisto] = tilalle+time.strftime("%X %x")+"\n" #korvaa merkinnän
-                    
-                except IndexError:
-                    print("Virheellinen valinta.")                  
-          
-            elif valinta == 4:
-                poista = open(muistio).read().splitlines() #tekee listan merkinnöistä riveittäin
-                merkinnat = len(muokkaa) #listan alkioiden määrä
-                print("Listalla on",merkinnat,"merkintää.")
-                
-                try:
-                    poisto = int(input("Mitä niistä poistetaan?: "))
-                    print(muokkaa[poisto])
-                    tilalle = input("Anna uusi teksti:")
-                    muokkaa[poisto] = tilalle+time.strftime("%X %x")+"\n" #korvaa merkinnän
-                    
-                except IndexError:
-                    print("Virheellinen valinta.")   
-                
-            elif valinta == 5:
-                print("Lopetetaan.")
-                break
-            
-            else:
-                print("Tuntematon valinta.")
-                
-        #palauttaa virheilmoituksen, jos käyttäjä syöttää muuta kuin numeron
-        except ValueError: 
-            print("Virheellinen valinta.")
+    #virheilmoitus:
+    except (IOError, OSError):
+        print("memo.dat was created.\n")
 
+    while True:
+        print("(1) Read memo\n(2) Add note\n(3) Edit node\n(4) Delete note\n(5) Save and close\n")
+
+        try: #varmista, että kayttaja syottaa numeron
+            valinta = int(input("What do you want to do?: "))
+
+            if valinta == 1: #printtaa sisällon rivi rivilta
+                for i in muistikirja:
+                    print(i)
+
+            elif valinta == 2: #lisaa uuden merkinnan
+                lisays = input("Write new note: ")
+                muistikirja.append(lisays+":::"+time.strftime("%X %x"))
+
+            elif valinta == 3 or valinta == 4:
+                merkinnat = len(muistikirja) #listan alkioiden maara
+                print("Memo has",merkinnat,"notes.")
+
+                if valinta == 3: #korvaa merkinnan toisella
+                    try:
+                        muokattava = int(input("What number of notes do you want to edit?: "))
+                        muokattava = muokattava - 1 #muuttaa valitun numeron alkion numeroksi
+                        print(muistikirja[muokattava])
+                        tilalle = input("Write note: ")
+                        muistikirja[muokattava] = tilalle+":::"+time.strftime("%X %x")   #korvaa merkinnan
+                    except IndexError:
+                        print("Edit error. ")
+
+                if valinta == 4: #poistaa merkinnän
+                    try:
+                        poisto = int(input("What number of notes do you want to delete?: "))
+                        poisto = poisto - 1 #muuttaa valitun numeron alkion numeroksi
+                        print("Note",muistikirja[poisto],"was deleted.")
+                        muistikirja.pop(poisto)
+                    except IndexError:
+                        print("Delete error.")
+
+            elif valinta == 5: #tallentaa muutokset pickle-tiedostoon ja lopettaa
+                print("Program is closed.")
+                with open("memo.dat","wb") as wfp:
+                    pickle.dump(muistikirja,wfp)
+                    wfp.close()
+                break
+              #syote  break
+
+            else: #jos valinta muuta kuin 1,2,3,4,5
+                print("Given number is not valid. Choose number between 1-5.")
+
+        except ValueError: #annettu input ei ole numero
+            print("Given character is not a number.")
 
 if __name__ == "__main__":
     main()
